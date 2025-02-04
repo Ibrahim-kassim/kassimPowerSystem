@@ -43,15 +43,15 @@ const jobNumberSchema = new mongoose.Schema({
 });
 
 const quotationSchema = new mongoose.Schema({
-    quotation_id: {
+    quotationId: {
         type: String,
-        unique: true,
-        sparse: true
+        required: [true, 'Quotation ID is required'],
+        trim: true
     },
     company: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Company',
-        required: true
+        required: [true, 'Company is required']
     },
     contact: {
         type: mongoose.Schema.Types.ObjectId,
@@ -129,20 +129,20 @@ const quotationSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Auto-generate quotation_id before saving
+// Auto-generate quotationId before saving
 quotationSchema.pre('save', async function(next) {
-    if (!this.quotation_id) {
+    if (!this.quotationId) {
         const date = new Date();
         const year = date.getFullYear().toString().substr(-2);
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         
         // Get the count of documents for this month
         const count = await this.constructor.countDocuments({
-            quotation_id: new RegExp(`^QT${year}${month}`)
+            quotationId: new RegExp(`^QT${year}${month}`)
         });
         
-        // Generate quotation_id: QT[YY][MM][XXXX]
-        this.quotation_id = `QT${year}${month}${(count + 1).toString().padStart(4, '0')}`;
+        // Generate quotationId: QT[YY][MM][XXXX]
+        this.quotationId = `QT${year}${month}${(count + 1).toString().padStart(4, '0')}`;
     }
     next();
 });
@@ -168,11 +168,11 @@ quotationSchema.pre('save', function(next) {
     next();
 });
 
-// Create indexes
+// Create indexes without duplicates
+quotationSchema.index({ quotationId: 1 }, { unique: true });
 quotationSchema.index({ company: 1 });
 quotationSchema.index({ status: 1 });
 quotationSchema.index({ createdAt: -1 });
-quotationSchema.index({ 'jobNumber.number': 1 });
 
 const Quotation = mongoose.model('Quotation', quotationSchema);
 

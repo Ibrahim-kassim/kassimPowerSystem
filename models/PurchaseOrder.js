@@ -48,7 +48,6 @@ const purchaseOrderSchema = new mongoose.Schema({
     poNumber: {
         type: String,
         required: true,
-        unique: true,
         trim: true
     },
     company: {
@@ -187,8 +186,8 @@ purchaseOrderSchema.methods.updateReceived = async function(itemUpdates) {
     return this.save();
 };
 
-// Indexes
-purchaseOrderSchema.index({ poNumber: 1 });
+// Create indexes without duplicates
+purchaseOrderSchema.index({ poNumber: 1 }, { unique: true });
 purchaseOrderSchema.index({ company: 1 });
 purchaseOrderSchema.index({ vendor: 1 });
 purchaseOrderSchema.index({ status: 1 });

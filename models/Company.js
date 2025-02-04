@@ -4,14 +4,11 @@ const companySchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Company name is required'],
-        unique: true,
-        trim: true,
-        index: true
+        trim: true
     },
     email: {
         type: String,
         required: [true, 'Email is required'],
-        unique: true,
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please add a valid email']
     },
     phone: {
@@ -49,7 +46,8 @@ const companySchema = new mongoose.Schema({
 });
 
 // Create indexes for better query performance
-companySchema.index({ email: 1 });
+companySchema.index({ name: 1 }, { unique: true });
+companySchema.index({ email: 1 }, { unique: true });
 companySchema.index({ 'address.country': 1 });
 companySchema.index({ status: 1 });
 

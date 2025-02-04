@@ -38,7 +38,6 @@ const purchaseRequisitionSchema = new mongoose.Schema({
     prNumber: {
         type: String,
         required: true,
-        unique: true,
         trim: true
     },
     company: {
@@ -138,8 +137,8 @@ purchaseRequisitionSchema.pre('save', async function(next) {
     next();
 });
 
-// Indexes
-purchaseRequisitionSchema.index({ prNumber: 1 });
+// Create indexes without duplicates
+purchaseRequisitionSchema.index({ prNumber: 1 }, { unique: true });
 purchaseRequisitionSchema.index({ company: 1 });
 purchaseRequisitionSchema.index({ status: 1 });
 purchaseRequisitionSchema.index({ requestedBy: 1 });

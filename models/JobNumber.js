@@ -3,48 +3,40 @@ const mongoose = require('mongoose');
 const jobNumberSchema = new mongoose.Schema({
     number: {
         type: String,
-        required: true,
-        unique: true
+        required: [true, 'Job number is required'],
+        trim: true
     },
     type: {
         type: String,
-        required: true,
-        enum: ['QUO', 'INV', 'COM', 'PRO', 'FIX']  // Types for different references
-    },
-    quotation_ref: {
-        type: String,
-        default: null
-    },
-    invoice_ref: {
-        type: String,
-        default: null
-    },
-    company_ref: {
-        type: String,
-        default: null
-    },
-    procurement_ref: {
-        type: String,
-        default: null
-    },
-    fixedAsset_ref: {
-        type: String,
-        default: null
+        required: [true, 'Type is required'],
+        enum: ['Q', 'W', 'M', 'S'],
+        trim: true
     },
     year: {
         type: Number,
-        required: true
+        required: [true, 'Year is required']
     },
     sequence: {
         type: Number,
-        required: true
+        required: [true, 'Sequence is required']
+    },
+    description: {
+        type: String,
+        trim: true
+    },
+    status: {
+        type: String,
+        enum: ['active', 'inactive'],
+        default: 'active'
     }
 }, {
     timestamps: true
 });
 
-// Create compound index for type and year for faster lookups
+// Create compound index for type and year
 jobNumberSchema.index({ type: 1, year: 1 });
+// Create index for number without duplicate definition
+jobNumberSchema.index({ number: 1 }, { unique: true });
 
 const JobNumber = mongoose.model('JobNumber', jobNumberSchema);
 

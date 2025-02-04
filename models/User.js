@@ -5,9 +5,13 @@ const userSchema = new mongoose.Schema({
     userName: {
         type: String,
         required: [true, 'Username is required'],
-        unique: true,
+        trim: true
+    },
+    email: {
+        type: String,
+        required: [true, 'Email is required'],
         trim: true,
-        index: true // Explicitly define the index
+        lowercase: true
     },
     password: {
         type: String,
@@ -41,19 +45,10 @@ userSchema.methods.matchPassword = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Drop existing indexes and recreate them
-userSchema.statics.initIndexes = async function() {
-    try {
-        await this.collection.dropIndexes();
-        await this.collection.createIndex({ userName: 1 }, { unique: true });
-    } catch (error) {
-        console.log('Index initialization error:', error);
-    }
-};
+// Create indexes
+userSchema.index({ userName: 1 }, { unique: true });
+userSchema.index({ email: 1 }, { unique: true });
 
 const User = mongoose.model('User', userSchema);
-
-// Initialize indexes when the model is first loaded
-User.initIndexes();
 
 module.exports = User;

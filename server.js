@@ -35,10 +35,6 @@ app.get('/', async (req, res) => {
     }
 });
 
-// Static folder with explicit path resolution
-const uploadsPath = path.join(__dirname, 'uploads');
-app.use('/uploads', express.static(uploadsPath));
-
 // Database connection middleware
 const dbMiddleware = async (req, res, next) => {
     try {

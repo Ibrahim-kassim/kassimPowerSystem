@@ -9,7 +9,6 @@ const fixedAssetSchema = new mongoose.Schema({
     assetCode: {
         type: String,
         required: [true, 'Asset code is required'],
-        unique: true,
         trim: true
     },
     company: {
@@ -91,10 +90,11 @@ const fixedAssetSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Add indexes for commonly queried fields
-fixedAssetSchema.index({ assetCode: 1 });
+// Create indexes without duplicates
+fixedAssetSchema.index({ assetCode: 1 }, { unique: true });
 fixedAssetSchema.index({ category: 1 });
 fixedAssetSchema.index({ department: 1 });
+fixedAssetSchema.index({ status: 1 });
 
 const FixedAsset = mongoose.model('FixedAsset', fixedAssetSchema);
 
