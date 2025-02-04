@@ -9,9 +9,16 @@ const { errorHandler } = require('./middleware/error');
 dotenv.config();
 
 // Connect to database
-connectDB();
+connectDB().catch(err => {
+    console.error('Database connection error:', err);
+});
 
 const app = express();
+
+// Add basic route for health check
+app.get('/', (req, res) => {
+    res.json({ message: 'API is running' });
+});
 
 // Middleware
 app.use(cors());
