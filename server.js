@@ -8,6 +8,7 @@ const { errorHandler } = require('./middleware/error');
 // Load env vars
 dotenv.config();
 
+// Initialize express
 const app = express();
 
 // Middleware
@@ -15,13 +16,29 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Add basic route for health check
-app.get('/', (req, res) => {
-    res.json({ message: 'API is running' });
+// Health check route
+app.get('/', async (req, res) => {
+    try {
+        await connectDB();
+        res.json({ status: 'ok', message: 'API is running' });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
 });
 
 // Static folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Database connection middleware
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        console.error('Database connection error:', error);
+        res.status(500).json({ error: 'Database connection failed' });
+    }
+});
 
 // Routes
 app.use('/api/users', require('./routes/userRoutes'));
@@ -41,11 +58,6 @@ app.use('/api/attachments', require('./routes/attachmentRoutes'));
 // Error Handler (should be last piece of middleware)
 app.use(errorHandler);
 
-// Connect to database
-connectDB().catch(err => {
-    console.error('Database connection error:', err);
-});
-
 // For local development
 if (process.env.NODE_ENV !== 'production') {
     const PORT = process.env.PORT || 5000;
@@ -54,5 +66,4 @@ if (process.env.NODE_ENV !== 'production') {
     });
 }
 
-// Export for serverless
 module.exports = app;
