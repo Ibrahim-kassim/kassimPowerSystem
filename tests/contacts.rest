@@ -1,0 +1,59 @@
+@baseUrl = http://localhost:5000/api/contacts
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTA4NmM2NzljYjA3NGY0ZTU0MTQ3NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczODU3MzU3MCwiZXhwIjoxNzQxMTY1NTcwfQ.X7FHqwWJE0rp9DBx2ixLjPdXS3OHY3BEPk0s75-uZa4
+### Create new contact
+POST {{baseUrl}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "email": "john.doe@techcorp.com",
+    "phone": "+1-555-123-4567",
+    "company": "67a0876a79cb074f4e54147f",
+    "additionalInfo": {
+        "position": "Senior Manager",
+        "department": "Sales",
+        "alternativePhone": "+1-555-987-6543",
+        "alternativeEmail": "john.d@personal.com",
+        "notes": "Key decision maker",
+        "socialMedia": {
+            "linkedin": "linkedin.com/in/johndoe",
+            "twitter": "@johndoe"
+        }
+    }
+}
+
+### Get all contacts
+GET {{baseUrl}}
+Authorization: Bearer {{token}}
+
+### Get contacts by company
+GET {{baseUrl}}/company/67a0858b0b9d4253f0ed7bf4
+Authorization: Bearer {{token}}
+
+### Get contacts by status
+GET {{baseUrl}}?status=active
+Authorization: Bearer {{token}}
+
+### Get contact by ID
+GET {{baseUrl}}/CONTACT_ID_HERE
+Authorization: Bearer {{token}}
+
+### Update contact
+PUT {{baseUrl}}/CONTACT_ID_HERE
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "John Doe Updated",
+    "email": "john.updated@techcorp.com",
+    "phone": "+1-555-999-8888",
+    "additionalInfo": {
+        "position": "VP of Sales",
+        "notes": "Promoted to VP"
+    }
+}
+
+### Delete contact
+DELETE {{baseUrl}}/CONTACT_ID_HERE
+Authorization: Bearer {{token}}

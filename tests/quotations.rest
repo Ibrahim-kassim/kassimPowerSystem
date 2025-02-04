@@ -1,0 +1,100 @@
+@baseUrl = http://localhost:5000/api/quotations
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTA4NmM2NzljYjA3NGY0ZTU0MTQ3NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczODU3MzU3MCwiZXhwIjoxNzQxMTY1NTcwfQ.X7FHqwWJE0rp9DBx2ixLjPdXS3OHY3BEPk0s75-uZa4
+
+### Create new quotation
+POST {{baseUrl}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "company": "67a0876a79cb074f4e54147f",
+    "contact": "67a0877679cb074f4e541483",
+    "products": [
+        {
+            "description": "Web Development Service",
+            "quantity": 1,
+            "unitPrice": 5000,
+            "total": 5000
+        },
+        {
+            "description": "Server Maintenance",
+            "quantity": 12,
+            "unitPrice": 100,
+            "total": 1200
+        }
+    ],
+    "notes": "This quotation includes development and maintenance services",
+    "currency": "USD",
+    "vatPercentage": 5,
+    "discountType": "percentage",
+    "discountValue": 10,
+    "jobNumber": {
+        "number": "JOB001",
+        "quotationRef": "QT2024001",
+        "jobName": "Company Website Development",
+        "jobNature": "Web Development"
+    }
+}
+
+### Get all quotations
+GET {{baseUrl}}
+Authorization: Bearer {{token}}
+
+### Get quotations by company
+GET {{baseUrl}}?company=67a0876a79cb074f4e54147f
+Authorization: Bearer {{token}}
+
+### Get quotations by status
+GET {{baseUrl}}?status=draft
+Authorization: Bearer {{token}}
+
+### Get quotations by date range
+GET {{baseUrl}}?startDate=2024-01-01&endDate=2024-12-31
+Authorization: Bearer {{token}}
+
+### Get quotation by ID
+GET {{baseUrl}}/QUOTATION_ID_HERE
+Authorization: Bearer {{token}}
+
+### Update quotation
+PUT {{baseUrl}}/QUOTATION_ID_HERE
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "products": [
+        {
+            "description": "Web Development Service - Updated",
+            "quantity": 1,
+            "unitPrice": 6000,
+            "total": 6000
+        },
+        {
+            "description": "Server Maintenance - Updated",
+            "quantity": 12,
+            "unitPrice": 150,
+            "total": 1800
+        }
+    ],
+    "notes": "Updated quotation with new prices",
+    "vatPercentage": 7,
+    "discountType": "fixed",
+    "discountValue": 500
+}
+
+### Update quotation status
+PATCH {{baseUrl}}/QUOTATION_ID_HERE/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "status": "sent"
+}
+
+### Convert quotation
+PATCH {{baseUrl}}/QUOTATION_ID_HERE/convert
+Authorization: Bearer {{token}}
+
+### Delete quotation
+DELETE {{baseUrl}}/67a0899155a2d24cc9acac47
+Authorization: Bearer {{token}}

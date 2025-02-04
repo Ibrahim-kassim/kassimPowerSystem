@@ -1,0 +1,61 @@
+@baseUrl = http://localhost:5000/api/companies
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTA4NmM2NzljYjA3NGY0ZTU0MTQ3NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczODU3MzU3MCwiZXhwIjoxNzQxMTY1NTcwfQ.X7FHqwWJE0rp9DBx2ixLjPdXS3OHY3BEPk0s75-uZa4
+
+### Create new company
+POST {{baseUrl}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Tech Corp International",
+    "email": "contact@techcorp.com",
+    "phone": "+1-555-123-4567",
+    "address": {
+        "street": "123 Innovation Drive",
+        "city": "Silicon Valley",
+        "state": "CA",
+        "country": "USA",
+        "postalCode": "94025"
+    },
+    "additionalInfo": {
+        "website": "www.techcorp.com",
+        "industry": "Technology",
+        "employeeCount": 500,
+        "foundedYear": 2010,
+        "description": "Leading technology solutions provider",
+        "taxId": "12-3456789",
+        "registrationNumber": "REG123456"
+    }
+}
+
+### Get all companies
+GET {{baseUrl}}
+Authorization: Bearer {{token}}
+
+### Get all active companies
+GET {{baseUrl}}?status=active
+Authorization: Bearer {{token}}
+
+### Get companies by country
+GET {{baseUrl}}?country=USA
+Authorization: Bearer {{token}}
+
+### Get company by ID
+GET {{baseUrl}}/COMPANY_ID_HERE
+Authorization: Bearer {{token}}
+
+### Update company
+PUT {{baseUrl}}/67a0858b0b9d4253f0ed7bf4
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Tech Corp International Updated",
+    "email": "newcontact@techcorp.com",
+    "phone": "+1-555-987-6543",
+    "status": "inactive"
+}
+
+### Delete company
+DELETE {{baseUrl}}/67a0858b0b9d4253f0ed7bf4
+Authorization: Bearer {{token}}

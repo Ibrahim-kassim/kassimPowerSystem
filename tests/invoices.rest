@@ -1,0 +1,88 @@
+@baseUrl = http://localhost:5000/api/invoices
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTA4NmM2NzljYjA3NGY0ZTU0MTQ3NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczODU3MzU3MCwiZXhwIjoxNzQxMTY1NTcwfQ.X7FHqwWJE0rp9DBx2ixLjPdXS3OHY3BEPk0s75-uZa4
+
+### Create new invoice
+POST {{baseUrl}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "company": "67a0876a79cb074f4e54147f",
+    "products": [
+        {
+            "description": "Web Development Service",
+            "quantity": 1,
+            "unitPrice": 5000,
+            "total": 5000
+        },
+        {
+            "description": "Server Maintenance",
+            "quantity": 12,
+            "unitPrice": 100,
+            "total": 1200
+        }
+    ],
+    "currency": "USD",
+    "vatPercentage": 5,
+    "discountType": "percentage",
+    "discountValue": 10
+}
+
+### Create invoice from quotation
+POST {{baseUrl}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "convertFromQuotation": true,
+    "quotationId": "QT25020001"
+}
+
+### Get all invoices
+GET {{baseUrl}}
+Authorization: Bearer {{token}}
+
+### Get invoices by company
+GET {{baseUrl}}?company=67a0876a79cb074f4e54147f
+Authorization: Bearer {{token}}
+
+### Get invoices by date range
+GET {{baseUrl}}?startDate=2024-01-01&endDate=2024-12-31
+Authorization: Bearer {{token}}
+
+### Get invoices converted from quotations
+GET {{baseUrl}}?convertedFromQuotation=true
+Authorization: Bearer {{token}}
+
+### Get invoice by ID
+GET {{baseUrl}}/INVOICE_ID_HERE
+Authorization: Bearer {{token}}
+
+### Update invoice
+PUT {{baseUrl}}/INVOICE_ID_HERE
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "products": [
+        {
+            "description": "Web Development Service - Updated",
+            "quantity": 1,
+            "unitPrice": 6000,
+            "total": 6000
+        },
+        {
+            "description": "Server Maintenance - Updated",
+            "quantity": 12,
+            "unitPrice": 150,
+            "total": 1800
+        }
+    ],
+    "vatPercentage": 7,
+    "discountType": "fixed",
+    "discountValue": 500
+}
+
+### Delete invoice
+DELETE {{baseUrl}}/INVOICE_ID_HERE
+Authorization: Bearer {{token}}

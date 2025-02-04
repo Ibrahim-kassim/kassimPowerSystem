@@ -1,0 +1,120 @@
+@baseUrl = http://localhost:5000/api/users
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTA4NmM2NzljYjA3NGY0ZTU0MTQ3NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczODU3MzU3MCwiZXhwIjoxNzQxMTY1NTcwfQ.X7FHqwWJE0rp9DBx2ixLjPdXS3OHY3BEPk0s75-uZa4
+
+### Register new admin user
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+    "userName": "admin",
+    "password": "123456",
+    "role": "admin",
+    "permissions": ["create", "read", "update", "delete"]
+}
+
+### Register new ERP user
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+    "userName": "erp_user1",
+    "password": "123456",
+    "role": "erp",
+    "permissions": ["read", "create"]
+}
+
+### Register new HR user
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+    "userName": "hr_user",
+    "password": "123456",
+    "role": "hr",
+    "permissions": ["read", "update"]
+}
+
+### Register new Wells user
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+    "userName": "wells_user",
+    "password": "123456",
+    "role": "wells",
+    "permissions": ["read"]
+}
+
+### Login as admin
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "userName": "admin",
+    "password": "123456"
+}
+
+### Login as ERP user
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "userName": "erp_user1",
+    "password": "123456"
+}
+
+### Get all users (Admin only)
+GET {{baseUrl}}
+Authorization: Bearer {{token}}
+
+### Get user by ID (Admin only)
+GET {{baseUrl}}/67a084051cefb2aa72ca21ac
+Authorization: Bearer {{token}}
+
+### Update user (Admin only)
+PUT {{baseUrl}}/67a084051cefb2aa72ca21ac
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "userName": "updated_username",
+    "role": "hr",
+    "permissions": ["read", "update", "create"]
+}
+
+### Update user password (Admin only)
+PUT {{baseUrl}}/67a084051cefb2aa72ca21ac
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "password": "newpassword123"
+}
+
+### Delete user (Admin only)
+DELETE {{baseUrl}}/67a084051cefb2aa72ca21ac
+Authorization: Bearer {{token}}
+
+### Test invalid login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "userName": "nonexistent",
+    "password": "wrongpassword"
+}
+
+### Test duplicate username registration
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+    "userName": "admin",
+    "password": "123456",
+    "role": "admin",
+    "permissions": ["create", "read", "update", "delete"]
+}
+
+### Test unauthorized access to admin routes
+GET {{baseUrl}}
+Authorization: Bearer INVALID_TOKEN_HERE

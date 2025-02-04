@@ -1,0 +1,44 @@
+@baseUrl = http://localhost:5000/api/products
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTA4NmM2NzljYjA3NGY0ZTU0MTQ3NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczODU3MzU3MCwiZXhwIjoxNzQxMTY1NTcwfQ.X7FHqwWJE0rp9DBx2ixLjPdXS3OHY3BEPk0s75-uZa4
+
+### Create new product
+POST {{baseUrl}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "description": "Web Development Service",
+    "quantity": 1,
+    "price": 5000
+}
+
+### Get all products
+GET {{baseUrl}}
+Authorization: Bearer {{token}}
+
+### Search products by description
+GET {{baseUrl}}?search=web
+Authorization: Bearer {{token}}
+
+### Filter products by price range
+GET {{baseUrl}}?minPrice=1000&maxPrice=6000
+Authorization: Bearer {{token}}
+
+### Get product by ID
+GET {{baseUrl}}/PRODUCT_ID_HERE
+Authorization: Bearer {{token}}
+
+### Update product
+PUT {{baseUrl}}/PRODUCT_ID_HERE
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "description": "Updated Web Development Service",
+    "quantity": 2,
+    "price": 6000
+}
+
+### Delete product
+DELETE {{baseUrl}}/PRODUCT_ID_HERE
+Authorization: Bearer {{token}}

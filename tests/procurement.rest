@@ -1,0 +1,144 @@
+@baseUrl = http://localhost:5000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTA4NmM2NzljYjA3NGY0ZTU0MTQ3NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczODU3MzU3MCwiZXhwIjoxNzQxMTY1NTcwfQ.X7FHqwWJE0rp9DBx2ixLjPdXS3OHY3BEPk0s75-uZa4
+@companyId = 67a0876a79cb074f4e54147f
+
+### Vendor Management ###
+
+### Get all vendors
+GET {{baseUrl}}/vendors?company={{companyId}}
+Authorization: Bearer {{token}}
+
+### Create new vendor
+POST {{baseUrl}}/vendors
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "vendorCode": "V001",
+    "company": "{{companyId}}",
+    "name": "ABC Supplies",
+    "contactPerson": "John Doe",
+    "email": "john@abcsupplies.com",
+    "phone": "+1234567890",
+    "address": {
+        "street": "123 Main St",
+        "city": "Business City",
+        "state": "BS",
+        "country": "Country",
+        "postalCode": "12345"
+    },
+    "taxId": "TAX123456",
+    "paymentTerms": "Net 30",
+    "accountPayable": "67a1ac3d3a516ce10264b4d4",
+    "category": ["Office Supplies", "IT Equipment"],
+    "notes": "Preferred vendor for office supplies"
+}
+
+### Purchase Requisition Management ###
+
+### Get all PRs
+GET {{baseUrl}}/purchaserequisitions?company={{companyId}}
+Authorization: Bearer {{token}}
+
+### Create new PR
+POST {{baseUrl}}/purchaserequisitions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "company": "{{companyId}}",
+    "department": "IT",
+    "jobNumber": "JOB_NUMBER_ID",
+    "requiredDate": "2024-03-01",
+    "priority": "Medium",
+    "items": [
+        {
+            "description": "Laptop Computer",
+            "quantity": 2,
+            "unit": "pcs",
+            "estimatedUnitPrice": 1000,
+            "estimatedTotalPrice": 2000,
+            "accountCode": "CHART_OF_ACCOUNT_ID",
+            "notes": "For new developers"
+        }
+    ],
+    "totalEstimatedAmount": 2000,
+    "notes": "Required for new team members"
+}
+
+### Approve PR
+POST {{baseUrl}}/purchaserequisitions/PR_ID/approve
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "status": "Approved",
+    "comments": "Approved as per budget allocation"
+}
+
+### Purchase Order Management ###
+
+### Get all POs
+GET {{baseUrl}}/purchaseorders?company={{companyId}}
+Authorization: Bearer {{token}}
+
+### Create new PO from PR
+POST {{baseUrl}}/purchaseorders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "company": "{{companyId}}",
+    "vendor": "VENDOR_ID",
+    "purchaseRequisition": "PR_ID",
+    "jobNumber": "JOB_NUMBER_ID",
+    "orderDate": "2024-02-04",
+    "expectedDeliveryDate": "2024-03-01",
+    "items": [
+        {
+            "description": "Laptop Computer",
+            "quantity": 2,
+            "unit": "pcs",
+            "unitPrice": 950,
+            "totalPrice": 1900,
+            "tax": 190,
+            "accountCode": "CHART_OF_ACCOUNT_ID"
+        }
+    ],
+    "subtotal": 1900,
+    "taxTotal": 190,
+    "total": 2090,
+    "paymentTerms": "Net 30",
+    "deliveryAddress": {
+        "street": "456 Office St",
+        "city": "Tech City",
+        "state": "TC",
+        "country": "Country",
+        "postalCode": "54321"
+    },
+    "notes": "Please deliver during office hours"
+}
+
+### Approve PO
+POST {{baseUrl}}/purchaseorders/PO_ID/approve
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "status": "Approved",
+    "comments": "Approved within budget"
+}
+
+### Record goods receipt
+POST {{baseUrl}}/purchaseorders/PO_ID/receive
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "items": [
+        {
+            "_id": "ITEM_ID",
+            "receivedQuantity": 2
+        }
+    ]
+}

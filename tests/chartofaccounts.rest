@@ -1,0 +1,160 @@
+@baseUrl = http://localhost:5000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTA4NmM2NzljYjA3NGY0ZTU0MTQ3NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczODU3MzU3MCwiZXhwIjoxNzQxMTY1NTcwfQ.X7FHqwWJE0rp9DBx2ixLjPdXS3OHY3BEPk0s75-uZa4
+
+@companyId = 67a0876a79cb074f4e54147f
+
+### Login to get token (if needed)
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+    "userName": "your_username",
+    "password": "your_password"
+}
+
+### Get all accounts for a company
+GET {{baseUrl}}/chartofaccounts?company={{companyId}}
+Authorization: Bearer {{token}}
+
+### Get account hierarchy
+GET {{baseUrl}}/chartofaccounts/hierarchy?company={{companyId}}
+Authorization: Bearer {{token}}
+
+### Create Level 1 Account (Assets)
+POST {{baseUrl}}/chartofaccounts
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Assets",
+    "level": 1,
+    "type": "Asset",
+    "company": "{{companyId}}",
+    "description": "All company assets"
+}
+
+### Create Level 2 Account (Fixed Assets) under Assets
+# Replace PARENT_ID with the _id from the Assets account created above
+POST {{baseUrl}}/chartofaccounts
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Fixed Assets",
+    "level": 2,
+    "type": "Asset",
+    "company": "{{companyId}}",
+    "parentId": "67a1aa34fc620a02ce298d59",
+    "description": "Long-term company assets"
+}
+
+### Create Level 3 Account (Buildings)
+# Replace PARENT_ID with the _id from the Fixed Assets account
+POST {{baseUrl}}/chartofaccounts
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Buildings",
+    "level": 3,
+    "type": "Asset",
+    "company": "{{companyId}}",
+    "parentId": "67a1aa6afc620a02ce298d63",
+    "description": "Company buildings and structures"
+}
+
+### Create Level 4 Account (Main Office)
+# Replace PARENT_ID with the _id from the Buildings account
+POST {{baseUrl}}/chartofaccounts
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Main Office",
+    "level": 4,
+    "type": "Asset",
+    "company": "{{companyId}}",
+    "parentId": "67a1aa83fc620a02ce298d69",
+    "description": "Main office building"
+}
+
+### Get account by code
+GET {{baseUrl}}/chartofaccounts/code/100.1.1.1?company={{companyId}}
+Authorization: Bearer {{token}}
+
+### Update account
+PUT {{baseUrl}}/chartofaccounts/ACCOUNT_ID
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Updated Name",
+    "description": "Updated description",
+    "status": "Active"
+}
+
+### Delete account (will fail if has children)
+DELETE {{baseUrl}}/chartofaccounts/ACCOUNT_ID
+Authorization: Bearer {{token}}
+
+### Fixed Assets API Calls ###
+
+### Get all fixed assets
+GET {{baseUrl}}/fixedassets
+Authorization: Bearer {{token}}
+
+### Create new fixed asset
+POST {{baseUrl}}/fixedassets
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "assetName": "Main Office Building",
+    "assetCode": "BLD001",
+    "company": "{{companyId}}",
+    "accountCode": "CHART_OF_ACCOUNT_ID",
+    "jobNumber": "JOB_NUMBER_ID",
+    "category": "Building",
+    "purchaseDate": "2024-01-01",
+    "purchasePrice": 1000000,
+    "currentValue": 950000,
+    "location": "Downtown",
+    "department": "Administration",
+    "condition": "Excellent",
+    "depreciationMethod": "Straight Line",
+    "depreciationRate": 5,
+    "usefulLife": 20,
+    "status": "Active",
+    "notes": "Main headquarters building"
+}
+
+### Get single fixed asset
+GET {{baseUrl}}/fixedassets/ASSET_ID
+Authorization: Bearer {{token}}
+
+### Update fixed asset
+PUT {{baseUrl}}/fixedassets/ASSET_ID
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "currentValue": 925000,
+    "condition": "Good",
+    "notes": "Updated building value after annual assessment"
+}
+
+### Add maintenance record to fixed asset
+POST {{baseUrl}}/fixedassets/ASSET_ID/maintenance
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "date": "2024-02-01",
+    "description": "Annual HVAC maintenance",
+    "cost": 5000,
+    "performedBy": "ABC Maintenance Co."
+}
+
+### Delete fixed asset
+DELETE {{baseUrl}}/fixedassets/ASSET_ID
+Authorization: Bearer {{token}}

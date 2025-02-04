@@ -1,0 +1,71 @@
+@baseUrl = http://localhost:5000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTA4NmM2NzljYjA3NGY0ZTU0MTQ3NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczODU3MzU3MCwiZXhwIjoxNzQxMTY1NTcwfQ.X7FHqwWJE0rp9DBx2ixLjPdXS3OHY3BEPk0s75-uZa4
+@companyId = 67a0876a79cb074f4e54147f
+
+### Get all attachments for a company
+GET {{baseUrl}}/attachments?company={{companyId}}
+Authorization: Bearer {{token}}
+
+### Get attachments by module and reference
+GET {{baseUrl}}/attachments/byreference/PurchaseOrder/PO_ID?company={{companyId}}
+Authorization: Bearer {{token}}
+
+### Get attachments with filters
+GET {{baseUrl}}/attachments?company={{companyId}}&module=Invoice&documentType=Receipt&tags=important,verified
+Authorization: Bearer {{token}}
+
+### Upload attachment for Purchase Order
+POST {{baseUrl}}/attachments
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="test.txt"
+Content-Type: text/plain
+
+This is a test file content
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="module"
+
+PurchaseOrder
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="documentType"
+
+Test Document
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="referenceId"
+
+67a0876a79cb074f4e541480
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
+
+Test attachment upload
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="tags"
+
+["test"]
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="company"
+
+{{companyId}}
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Download attachment
+GET {{baseUrl}}/attachments/ATTACHMENT_ID/download
+Authorization: Bearer {{token}}
+
+### Update attachment
+PUT {{baseUrl}}/attachments/ATTACHMENT_ID
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "description": "Updated description",
+    "documentType": "Updated Document",
+    "tags": ["test", "updated"],
+    "status": "Active"
+}
+
+### Delete attachment
+DELETE {{baseUrl}}/attachments/ATTACHMENT_ID
+Authorization: Bearer {{token}}

@@ -1,0 +1,58 @@
+@baseUrl = http://localhost:5000/api/jobnumbers
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTA4NmM2NzljYjA3NGY0ZTU0MTQ3NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczODU3MzU3MCwiZXhwIjoxNzQxMTY1NTcwfQ.X7FHqwWJE0rp9DBx2ixLjPdXS3OHY3BEPk0s75-uZa4
+
+### Generate new quotation number
+GET {{baseUrl}}/generate/QUO
+Authorization: Bearer {{token}}
+
+### Generate new invoice number
+GET {{baseUrl}}/generate/INV
+Authorization: Bearer {{token}}
+
+### Generate new company number
+GET {{baseUrl}}/generate/COM
+Authorization: Bearer {{token}}
+
+### Generate new procurement number
+GET {{baseUrl}}/generate/PRO
+Authorization: Bearer {{token}}
+
+### Generate new fixed asset number
+GET {{baseUrl}}/generate/FIX
+Authorization: Bearer {{token}}
+
+### Update fixed asset reference
+PATCH {{baseUrl}}/FIX_2025_0/reference
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "field": "fixedAsset_ref",
+    "value": "FA25020001"
+}
+
+### Update quotation reference
+PATCH {{baseUrl}}/QUO_2025_0/reference
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "field": "quotation_ref",
+    "value": "QT25020001"
+}
+
+### Get all job numbers
+GET {{baseUrl}}
+Authorization: Bearer {{token}}
+
+### Get job numbers by type
+GET {{baseUrl}}?type=QUO
+Authorization: Bearer {{token}}
+
+### Get job numbers by year
+GET {{baseUrl}}?year=2025
+Authorization: Bearer {{token}}
+
+### Get job number by ID
+GET {{baseUrl}}/JOB_NUMBER_ID_HERE
+Authorization: Bearer {{token}}
