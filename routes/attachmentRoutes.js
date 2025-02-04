@@ -7,28 +7,8 @@ const { promisify } = require('util');
 const Attachment = require('../models/Attachment');
 const { protect } = require('../middleware/auth');
 
-// Create uploads directory if it doesn't exist
-const uploadDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure multer for file upload
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        // Create company and module specific directory
-        const companyDir = path.join(uploadDir, req.body.company, req.body.module);
-        if (!fs.existsSync(companyDir)) {
-            fs.mkdirSync(companyDir, { recursive: true });
-        }
-        cb(null, companyDir);
-    },
-    filename: function(req, file, cb) {
-        // Generate unique filename with original extension
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    }
-});
+// Use memory storage for Vercel deployment
+const storage = multer.memoryStorage();
 
 const upload = multer({
     storage: storage,
@@ -36,8 +16,15 @@ const upload = multer({
         fileSize: 10 * 1024 * 1024 // 10MB limit
     },
     fileFilter: function(req, file, cb) {
-        // Add any file type restrictions here if needed
-        cb(null, true);
+        // Allow only certain file types
+        const allowedTypes = /jpeg|jpg|png|gif|pdf|doc|docx|xls|xlsx/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
+
+        if (extname && mimetype) {
+            return cb(null, true);
+        }
+        cb(new Error('Invalid file type!'));
     }
 });
 
@@ -51,11 +38,11 @@ router.post('/', protect, upload.single('file'), async (req, res) => {
         }
 
         const attachment = new Attachment({
-            fileName: req.file.filename,
+            fileName: req.file.originalname,
             originalName: req.file.originalname,
             mimeType: req.file.mimetype,
             size: req.file.size,
-            path: req.file.path,
+            data: req.file.buffer,
             module: req.body.module,
             documentType: req.body.documentType,
             referenceId: req.body.referenceId,
@@ -68,10 +55,6 @@ router.post('/', protect, upload.single('file'), async (req, res) => {
         const savedAttachment = await attachment.save();
         res.status(201).json(savedAttachment);
     } catch (error) {
-        // Clean up uploaded file if database save fails
-        if (req.file) {
-            await promisify(fs.unlink)(req.file.path);
-        }
         res.status(400).json({ message: error.message });
     }
 });
@@ -151,18 +134,12 @@ router.get('/:id/download', protect, async (req, res) => {
             return res.status(404).json({ message: 'Attachment not found' });
         }
 
-        // Check if file exists
-        if (!fs.existsSync(attachment.path)) {
-            return res.status(404).json({ message: 'File not found on server' });
-        }
-
         // Set content disposition and type
         res.setHeader('Content-Disposition', `attachment; filename="${attachment.originalName}"`);
         res.setHeader('Content-Type', attachment.mimeType);
 
         // Stream the file
-        const fileStream = fs.createReadStream(attachment.path);
-        fileStream.pipe(res);
+        res.send(attachment.data);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -208,11 +185,6 @@ router.delete('/:id', protect, async (req, res) => {
         const attachment = await Attachment.findById(req.params.id);
         if (!attachment) {
             return res.status(404).json({ message: 'Attachment not found' });
-        }
-
-        // Delete file from filesystem
-        if (fs.existsSync(attachment.path)) {
-            await promisify(fs.unlink)(attachment.path);
         }
 
         await attachment.deleteOne();

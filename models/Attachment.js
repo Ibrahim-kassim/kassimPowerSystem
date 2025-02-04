@@ -1,29 +1,26 @@
 const mongoose = require('mongoose');
 
 const attachmentSchema = new mongoose.Schema({
-    fileName: {
+    filename: {
         type: String,
-        required: [true, 'File name is required'],
+        required: [true, 'Filename is required'],
         trim: true
     },
-    originalName: {
+    contentType: {
         type: String,
-        required: [true, 'Original file name is required'],
-        trim: true
-    },
-    mimeType: {
-        type: String,
-        required: [true, 'File type is required'],
-        trim: true
+        required: [true, 'Content type is required']
     },
     size: {
         type: Number,
         required: [true, 'File size is required']
     },
-    path: {
+    data: {
+        type: Buffer,
+        required: [true, 'File data is required']
+    },
+    company: {
         type: String,
-        required: [true, 'File path is required'],
-        trim: true
+        required: [true, 'Company is required']
     },
     module: {
         type: String,
@@ -41,33 +38,19 @@ const attachmentSchema = new mongoose.Schema({
             'Product'
         ]
     },
-    documentType: {
-        type: String,
-        required: [true, 'Document type is required'],
-        trim: true
-    },
     referenceId: {
         type: mongoose.Schema.Types.ObjectId,
         required: [true, 'Reference ID is required'],
         refPath: 'module'
     },
-    description: {
-        type: String,
-        trim: true
-    },
-    tags: [{
-        type: String,
-        trim: true
-    }],
     uploadedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: [true, 'User ID is required']
     },
-    company: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
-        required: true
+    uploadedAt: {
+        type: Date,
+        default: Date.now
     },
     status: {
         type: String,
@@ -115,12 +98,12 @@ attachmentSchema.pre('save', async function(next) {
     next();
 });
 
-// Indexes for better query performance
-attachmentSchema.index({ referenceId: 1, module: 1 });
+// Create indexes
 attachmentSchema.index({ company: 1 });
+attachmentSchema.index({ module: 1 });
+attachmentSchema.index({ referenceId: 1 });
 attachmentSchema.index({ uploadedBy: 1 });
-attachmentSchema.index({ fileName: 1 });
-attachmentSchema.index({ tags: 1 });
+attachmentSchema.index({ filename: 1 });
 attachmentSchema.index({ status: 1 });
 
 const Attachment = mongoose.model('Attachment', attachmentSchema);
