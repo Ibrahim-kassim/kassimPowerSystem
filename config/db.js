@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 
-let cachedConnection = null;
+let isConnected = false;
 
 const connectDB = async () => {
-    if (cachedConnection) {
-        return cachedConnection;
+    if (isConnected) {
+        console.log('Using existing database connection');
+        return;
     }
 
     try {
@@ -13,11 +14,23 @@ const connectDB = async () => {
             useUnifiedTopology: true,
         });
         
-        cachedConnection = conn;
+        isConnected = true;
         console.log(`MongoDB Connected: ${conn.connection.host}`);
-        return conn;
+
+        // Handle connection events
+        mongoose.connection.on('disconnected', () => {
+            console.log('MongoDB disconnected');
+            isConnected = false;
+        });
+
+        mongoose.connection.on('error', (err) => {
+            console.error('MongoDB connection error:', err);
+            isConnected = false;
+        });
+
     } catch (error) {
         console.error(`Error: ${error.message}`);
+        isConnected = false;
         throw error;
     }
 };

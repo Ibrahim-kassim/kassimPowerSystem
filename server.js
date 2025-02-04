@@ -16,29 +16,45 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check route
+// Health check route that doesn't require DB connection
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', message: 'Server is running' });
+});
+
+// Root route with DB check
 app.get('/', async (req, res) => {
     try {
         await connectDB();
-        res.json({ status: 'ok', message: 'API is running' });
+        res.json({ status: 'ok', message: 'API is running with database connection' });
     } catch (error) {
-        res.status(500).json({ status: 'error', message: error.message });
+        res.status(500).json({ 
+            status: 'error', 
+            message: 'Database connection failed',
+            error: process.env.NODE_ENV === 'development' ? error.message : 'Internal Server Error'
+        });
     }
 });
 
-// Static folder
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Static folder with explicit path resolution
+const uploadsPath = path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(uploadsPath));
 
 // Database connection middleware
-app.use(async (req, res, next) => {
+const dbMiddleware = async (req, res, next) => {
     try {
         await connectDB();
         next();
     } catch (error) {
         console.error('Database connection error:', error);
-        res.status(500).json({ error: 'Database connection failed' });
+        res.status(500).json({ 
+            error: 'Database connection failed',
+            message: process.env.NODE_ENV === 'development' ? error.message : 'Internal Server Error'
+        });
     }
-});
+};
+
+// Apply database middleware to all API routes
+app.use('/api', dbMiddleware);
 
 // Routes
 app.use('/api/users', require('./routes/userRoutes'));
